@@ -21,7 +21,7 @@
     "framer-motion": "^12.9.2",
     "immer": "^10.1.1",
     "lucide-react": "^0.503.0",
-    "next": "15.3.1",
+    "next": "^15.3.1",
     "node-appwrite": "^16.0.0",
     "postcss": "^8.5.3",
     "react": "^19.0.0",

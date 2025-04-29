@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -14,6 +15,8 @@ interface GridPatternProps {
     className?: string;
     maxOpacity?: number;
     duration?: number;
+    repeatDelay?: number; // Explicitly include it in the props
+    [key: string]: any; // Allow other props
 }
 
 interface Square {
@@ -92,6 +95,11 @@ export function GridPattern({
         };
     }, []);
 
+    // Filter out props that are not valid for the SVG element
+    const svgProps = Object.fromEntries(
+        Object.entries(props).filter(([key]) => key !== "repeatDelay")
+    );
+
     return (
         <svg
             ref={containerRef}
@@ -100,7 +108,7 @@ export function GridPattern({
                 "pointer-events-none absolute inset-0 h-full w-full fill-gray-400/30 stroke-gray-400/30",
                 className
             )}
-            {...props}
+            {...svgProps} // Use the filtered props
         >
             <defs>
                 <pattern
@@ -126,9 +134,10 @@ export function GridPattern({
                         animate={{ opacity: maxOpacity }}
                         transition={{
                             duration,
-                            repeat: 1,
+                            repeat: Infinity,
                             delay: index * 0.1,
                             repeatType: "reverse",
+                            repeatDelay: props.repeatDelay, // Now you can use it here
                         }}
                         onAnimationComplete={() => updateSquarePosition(id)}
                         key={`${x}-${y}-${id}`}
