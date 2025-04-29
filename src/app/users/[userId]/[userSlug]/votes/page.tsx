@@ -1,5 +1,10 @@
 import Pagination from "@/components/Pagination";
-import { answerCollection, db, questionCollection, voteCollection } from "@/models/name";
+import {
+    answerCollection,
+    db,
+    questionCollection,
+    voteCollection,
+} from "@/models/name";
 import { databases } from "@/models/sever/config";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 import slugify from "@/utils/slugify";
@@ -23,40 +28,48 @@ const Page = async ({
         Query.limit(25),
     ];
 
-    if (searchParams.voteStatus) query.push(Query.equal("voteStatus", searchParams.voteStatus));
+    if (searchParams.voteStatus) {
+        query.push(Query.equal("voteStatus", searchParams.voteStatus));
+    }
 
     const votes = await databases.listDocuments(db, voteCollection, query);
-
-    votes.documents = await Promise.all(
-        votes.documents.map(async vote => {
-            const questionOfTypeQuestion =
-                vote.type === "question"
-                    ? await databases.getDocument(db, questionCollection, vote.typeId, [
-                          Query.select(["title"]),
-                      ])
-                    : null;
-
-            if (questionOfTypeQuestion) {
-                return {
-                    ...vote,
-                    question: questionOfTypeQuestion,
-                };
-            }
-
-            const answer = await databases.getDocument(db, answerCollection, vote.typeId);
-            const questionOfTypeAnswer = await databases.getDocument(
-                db,
-                questionCollection,
-                answer.questionId,
-                [Query.select(["title"])]
-            );
-
-            return {
-                ...vote,
-                question: questionOfTypeAnswer,
-            };
-        })
-    );
+    votes.documents = (
+        await Promise.all(
+            votes.documents.map(async vote => {
+                try {
+                    if (vote.type === "question") {
+                        const question = await databases.getDocument(
+                            db,
+                            questionCollection,
+                            vote.typeId,
+                            [Query.select(["title"])]
+                        );
+                        return {
+                            ...vote,
+                            question,
+                        };
+                    }
+    
+                    const answer = await databases.getDocument(db, answerCollection, vote.typeId);
+                    const question = await databases.getDocument(
+                        db,
+                        questionCollection,
+                        answer.questionId,
+                        [Query.select(["title"])]
+                    );
+    
+                    return {
+                        ...vote,
+                        question,
+                    };
+                } catch (error: any) {
+                    if (error.code === 404) return null;
+                    throw error;
+                }
+            })
+        )
+    ).filter(Boolean) as typeof votes.documents; // <-- This forces the type
+    
 
     return (
         <div className="px-4">
@@ -77,7 +90,7 @@ const Page = async ({
                         <Link
                             href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=upvoted`}
                             className={`block w-full rounded-full px-3 py-0.5 duration-200 ${
-                                searchParams?.voteStatus === "upvoted"
+                                searchParams.voteStatus === "upvoted"
                                     ? "bg-white/20"
                                     : "hover:bg-white/20"
                             }`}
@@ -89,7 +102,7 @@ const Page = async ({
                         <Link
                             href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=downvoted`}
                             className={`block w-full rounded-full px-3 py-0.5 duration-200 ${
-                                searchParams?.voteStatus === "downvoted"
+                                searchParams.voteStatus === "downvoted"
                                     ? "bg-white/20"
                                     : "hover:bg-white/20"
                             }`}
@@ -109,7 +122,9 @@ const Page = async ({
                             <p className="mr-4 shrink-0">{vote.voteStatus}</p>
                             <p>
                                 <Link
-                                    href={`/questions/${vote.question.$id}/${slugify(vote.question.title)}`}
+                                    href={`/questions/${vote.question.$id}/${slugify(
+                                        vote.question.title
+                                    )}`}
                                     className="text-orange-500 hover:text-orange-600"
                                 >
                                     {vote.question.title}
