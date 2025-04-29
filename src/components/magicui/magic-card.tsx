@@ -9,10 +9,7 @@ interface MousePosition {
 }
 
 function useMousePosition(): MousePosition {
-    const [mousePosition, setMousePosition] = useState<MousePosition>({
-        x: 0,
-        y: 0,
-    });
+    const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleMouseMove = (event: globalThis.MouseEvent) => {
@@ -31,7 +28,7 @@ function useMousePosition(): MousePosition {
 
 interface MagicContainerProps {
     children?: ReactNode;
-    className?: any;
+    className?: string;
 }
 
 const MagicContainer = ({ children, className }: MagicContainerProps) => {
@@ -39,12 +36,13 @@ const MagicContainer = ({ children, className }: MagicContainerProps) => {
     const mousePosition = useMousePosition();
     const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
     const containerSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
-    const [boxes, setBoxes] = useState<Array<HTMLElement>>([]);
+    const [boxes, setBoxes] = useState<HTMLElement[]>([]);
 
     useEffect(() => {
         init();
-        containerRef.current &&
+        if (containerRef.current) {
             setBoxes(Array.from(containerRef.current.children).map(el => el as HTMLElement));
+        }
     }, []);
 
     useEffect(() => {
@@ -54,7 +52,7 @@ const MagicContainer = ({ children, className }: MagicContainerProps) => {
         return () => {
             window.removeEventListener("resize", init);
         };
-    }, [setBoxes]);
+    }, []);
 
     useEffect(() => {
         onMouseMove();
@@ -103,67 +101,60 @@ interface MagicCardProps {
     /**
      * @default <div />
      * @type ReactElement
-     * @description
-     * The component to be rendered as the card
-     * */
+     * @description The component to be rendered as the card
+     */
     as?: ReactElement;
+
     /**
      * @default ""
      * @type string
-     * @description
-     * The className of the card
+     * @description The className of the card
      */
     className?: string;
 
     /**
      * @default ""
      * @type ReactNode
-     * @description
-     * The children of the card
-     * */
+     * @description The children of the card
+     */
     children?: ReactNode;
 
     /**
      * @default 600
      * @type number
-     * @description
-     * The size of the spotlight effect in pixels
-     * */
+     * @description The size of the spotlight effect in pixels
+     */
     size?: number;
 
     /**
      * @default true
      * @type boolean
-     * @description
-     * Whether to show the spotlight
-     * */
+     * @description Whether to show the spotlight
+     */
     spotlight?: boolean;
 
     /**
      * @default "rgba(255,255,255,0.03)"
      * @type string
-     * @description
-     * The color of the spotlight
-     * */
+     * @description The color of the spotlight
+     */
     spotlightColor?: string;
 
     /**
      * @default true
      * @type boolean
-     * @description
-     * Whether to isolate the card which is being hovered
-     * */
+     * @description Whether to isolate the card which is being hovered
+     */
     isolated?: boolean;
 
     /**
      * @default "rgba(255,255,255,0.03)"
      * @type string
-     * @description
-     * The background of the card
-     * */
+     * @description The background of the card
+     */
     background?: string;
 
-    [key: string]: any;
+    [key: string]: any; // Other custom properties
 }
 
 const MagicCard: React.FC<MagicCardProps> = ({
@@ -171,18 +162,18 @@ const MagicCard: React.FC<MagicCardProps> = ({
     children,
     size = 600,
     spotlight = true,
-    borderColor = "hsl(0 0% 98%)",
+    spotlightColor = "rgba(255,255,255,0.03)",
     isolated = true,
+    borderColor = "hsl(0 0% 98%)",
     ...props
 }) => {
     return (
         <div
-            style={
-                {
-                    "--mask-size": `${size}px`,
-                    "--border-color": `${borderColor}`,
-                } as CSSProperties
-            }
+            style={{
+                "--mask-size": `${size}px`,
+                "--border-color": `${borderColor}`,
+                "--spotlight-color": spotlightColor,
+            } as CSSProperties}
             className={cn(
                 "relative z-0 h-full w-full rounded-2xl p-6",
                 "bg-gray-300 dark:bg-gray-700",

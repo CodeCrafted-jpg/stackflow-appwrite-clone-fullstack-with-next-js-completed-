@@ -12,48 +12,43 @@ interface NeonGradientCardProps {
     /**
      * @default <div />
      * @type ReactElement
-     * @description
-     * The component to be rendered as the card
-     * */
+     * @description The component to be rendered as the card
+     */
     as?: ReactElement;
+
     /**
      * @default ""
      * @type string
-     * @description
-     * The className of the card
+     * @description The className of the card
      */
     className?: string;
 
     /**
      * @default ""
      * @type ReactNode
-     * @description
-     * The children of the card
-     * */
+     * @description The children of the card
+     */
     children?: ReactNode;
 
     /**
      * @default 5
      * @type number
-     * @description
-     * The size of the border in pixels
-     * */
+     * @description The size of the border in pixels
+     */
     borderSize?: number;
 
     /**
      * @default 20
      * @type number
-     * @description
-     * The size of the radius in pixels
-     * */
+     * @description The size of the radius in pixels
+     */
     borderRadius?: number;
 
     /**
      * @default "{ firstColor: '#ff00aa', secondColor: '#00FFF1' }"
-     * @type string
-     * @description
-     * The colors of the neon gradient
-     * */
+     * @type NeonColorsProps
+     * @description The colors of the neon gradient
+     */
     neonColors?: NeonColorsProps;
 
     [key: string]: any;
@@ -64,14 +59,11 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
     children,
     borderSize = 2,
     borderRadius = 20,
-    neonColors = {
-        firstColor: "#ff00aa",
-        secondColor: "#00FFF1",
-    },
+    neonColors = { firstColor: "#ff00aa", secondColor: "#00FFF1" },
     ...props
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -92,21 +84,19 @@ const NeonGradientCard: React.FC<NeonGradientCardProps> = ({
     return (
         <div
             ref={containerRef}
-            style={
-                {
-                    "--border-size": `${borderSize}px`,
-                    "--border-radius": `${borderRadius}px`,
-                    "--neon-first-color": neonColors.firstColor,
-                    "--neon-second-color": neonColors.secondColor,
-                    "--card-width": `${dimensions.width}px`,
-                    "--card-height": `${dimensions.height}px`,
-                    "--card-content-radius": `${borderRadius - borderSize}px`,
-                    "--pseudo-element-background-image": `linear-gradient(0deg, ${neonColors.firstColor}, ${neonColors.secondColor})`,
-                    "--pseudo-element-width": `${dimensions.width + borderSize * 2}px`,
-                    "--pseudo-element-height": `${dimensions.height + borderSize * 2}px`,
-                    "--after-blur": `${dimensions.width / 3}px`,
-                } as CSSProperties
-            }
+            style={{
+                "--border-size": `${borderSize}px`,
+                "--border-radius": `${borderRadius}px`,
+                "--neon-first-color": neonColors.firstColor,
+                "--neon-second-color": neonColors.secondColor,
+                "--card-width": `${dimensions.width}px`,
+                "--card-height": `${dimensions.height}px`,
+                "--card-content-radius": `${borderRadius - borderSize}px`,
+                "--pseudo-element-background-image": `linear-gradient(0deg, ${neonColors.firstColor}, ${neonColors.secondColor})`,
+                "--pseudo-element-width": `${dimensions.width + borderSize * 2}px`,
+                "--pseudo-element-height": `${dimensions.height + borderSize * 2}px`,
+                "--after-blur": `${dimensions.width / 3}px`,
+            } as CSSProperties}
             className={cn("relative z-10 h-full w-full rounded-[var(--border-radius)]", className)}
             {...props}
         >

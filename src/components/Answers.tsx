@@ -1,6 +1,6 @@
 "use client";
 
-import {  Models } from "appwrite";
+import { Models } from "appwrite";
 import React from "react";
 import VoteButtons from "./VoteButtons";
 import { useAuthStore } from "@/store/auth";
@@ -41,7 +41,7 @@ const Answers = ({
 
             if (!response.ok) throw data;
 
-            setNewAnswer(() => "");
+            setNewAnswer("");
             setAnswers(prev => ({
                 total: prev.total + 1,
                 documents: [
@@ -55,8 +55,9 @@ const Answers = ({
                     ...prev.documents,
                 ],
             }));
-        } catch (error: any) {
-            window.alert(error?.message || "Error creating answer");
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            window.alert(err?.message || "Error creating answer");
         }
     };
 
@@ -77,8 +78,9 @@ const Answers = ({
                 total: prev.total - 1,
                 documents: prev.documents.filter(answer => answer.$id !== answerId),
             }));
-        } catch (error: any) {
-            window.alert(error?.message || "Error deleting answer");
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            window.alert(err?.message || "Error deleting answer");
         }
     };
 
@@ -138,7 +140,10 @@ const Answers = ({
             <hr className="my-4 border-white/40" />
             <form onSubmit={handleSubmit} className="space-y-2">
                 <h2 className="mb-4 text-xl">Your Answer</h2>
-                <RTE value={newAnswer} onChange={(value: any) => setNewAnswer(() => value || "")} />
+                <RTE
+                    value={newAnswer}
+                    onChange={(value: string | undefined) => setNewAnswer(value || "")}
+                />
                 <button className="shrink-0 rounded bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-600">
                     Post Your Answer
                 </button>

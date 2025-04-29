@@ -3,7 +3,7 @@
 import { databases } from "@/models/client/config";
 import { commentCollection, db } from "@/models/name";
 import { useAuthStore } from "@/store/auth";
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 import slugify from "@/utils/slugify";
 import { IconTrash } from "@tabler/icons-react";
@@ -38,13 +38,14 @@ const Comments = ({
                 typeId: typeId,
             });
 
-            setNewComment(() => "");
+            setNewComment("");
             setComments(prev => ({
                 total: prev.total + 1,
                 documents: [{ ...response, author: user }, ...prev.documents],
             }));
-        } catch (error: any) {
-            window.alert(error?.message || "Error creating comment");
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            window.alert(err?.message || "Error creating comment");
         }
     };
 
@@ -56,8 +57,9 @@ const Comments = ({
                 total: prev.total - 1,
                 documents: prev.documents.filter(comment => comment.$id !== commentId),
             }));
-        } catch (error: any) {
-            window.alert(error?.message || "Error deleting comment");
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            window.alert(err?.message || "Error deleting comment");
         }
     };
 
@@ -97,7 +99,7 @@ const Comments = ({
                     rows={1}
                     placeholder="Add a comment..."
                     value={newComment}
-                    onChange={e => setNewComment(() => e.target.value)}
+                    onChange={e => setNewComment(e.target.value)}
                 />
                 <button className="shrink-0 rounded bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-600">
                     Add Comment

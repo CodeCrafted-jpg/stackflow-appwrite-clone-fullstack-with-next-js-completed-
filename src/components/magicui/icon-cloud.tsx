@@ -1,9 +1,15 @@
 "use client";
 
-// import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
-import { Cloud, fetchSimpleIcons, ICloud, renderSimpleIcon, SimpleIcon } from "react-icon-cloud";
+import {
+    Cloud,
+    fetchSimpleIcons,
+    ICloud,
+    renderSimpleIcon,
+    SimpleIcon,
+} from "react-icon-cloud";
 
+// Cloud configuration
 export const cloudProps: Omit<ICloud, "children"> = {
     containerProps: {
         style: {
@@ -27,10 +33,10 @@ export const cloudProps: Omit<ICloud, "children"> = {
         outlineColour: "#0000",
         maxSpeed: 0.04,
         minSpeed: 0.02,
-        // dragControl: false,
     },
 };
 
+// Render each icon with appropriate theme styling
 export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
     const bgHex = theme === "light" ? "#f3f2ef" : "#080510";
     const fallbackHex = theme === "light" ? "#6e6e73" : "#ffffff";
@@ -46,7 +52,7 @@ export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
             href: undefined,
             target: undefined,
             rel: undefined,
-            onClick: e => e.preventDefault(),
+            onClick: (e: React.MouseEvent) => e.preventDefault(),
         },
     });
 };
@@ -59,7 +65,9 @@ type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
 export default function IconCloud({ iconSlugs }: DynamicCloudProps) {
     const [data, setData] = useState<IconData | null>(null);
-    const { theme } = { theme: "dark" };
+
+    // Hardcoded theme for now
+    const theme: "light" | "dark" = "dark";
 
     useEffect(() => {
         fetchSimpleIcons({ slugs: iconSlugs }).then(setData);
@@ -69,14 +77,14 @@ export default function IconCloud({ iconSlugs }: DynamicCloudProps) {
         if (!data) return null;
 
         return Object.values(data.simpleIcons).map(icon =>
-            renderCustomIcon(icon, theme || "light")
+            renderCustomIcon(icon, theme)
         );
     }, [data, theme]);
 
     return (
-        // @ts-ignore
         <Cloud {...cloudProps}>
-            <>{renderedIcons}</>
+            {/* React will ignore fragments with null children */}
+            {renderedIcons}
         </Cloud>
     );
 }

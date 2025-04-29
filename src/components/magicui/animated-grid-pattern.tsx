@@ -1,19 +1,24 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useCallback } from "react";
 
 interface GridPatternProps {
     width?: number;
     height?: number;
     x?: number;
     y?: number;
-    strokeDasharray?: any;
+    strokeDasharray?: string | number;
     numSquares?: number;
     className?: string;
     maxOpacity?: number;
     duration?: number;
-    repeatDelay?: number;
+}
+
+interface Square {
+    id: number;
+    pos: [number, number];
 }
 
 export function GridPattern({
@@ -21,59 +26,53 @@ export function GridPattern({
     height = 40,
     x = -1,
     y = -1,
-    strokeDasharray = 0,
+    strokeDasharray = "0",
     numSquares = 50,
     className,
     maxOpacity = 0.5,
     duration = 4,
-    repeatDelay = 0.5,
     ...props
 }: GridPatternProps) {
     const id = useId();
-    const containerRef = useRef(null);
+    const containerRef = useRef<SVGSVGElement | null>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-    const [squares, setSquares] = useState(() => generateSquares(numSquares));
+    const [squares, setSquares] = useState<Square[]>([]);
 
-    function getPos() {
+    const getPos = useCallback((): [number, number] => {
         return [
             Math.floor((Math.random() * dimensions.width) / width),
             Math.floor((Math.random() * dimensions.height) / height),
         ];
-    }
+    }, [dimensions.width, dimensions.height, width, height]);
 
-    // Adjust the generateSquares function to return objects with an id, x, and y
-    function generateSquares(count: number) {
-        return Array.from({ length: count }, (_, i) => ({
-            id: i,
-            pos: getPos(),
-        }));
-    }
+    const generateSquares = useCallback(
+        (count: number): Square[] => {
+            return Array.from({ length: count }, (_, i) => ({
+                id: i,
+                pos: getPos(),
+            }));
+        },
+        [getPos]
+    );
 
-    // Function to update a single square's position
     const updateSquarePosition = (id: number) => {
         setSquares(currentSquares =>
             currentSquares.map(sq =>
-                sq.id === id
-                    ? {
-                          ...sq,
-                          pos: getPos(),
-                      }
-                    : sq
+                sq.id === id ? { ...sq, pos: getPos() } : sq
             )
         );
     };
 
-    // Update squares to animate in
     useEffect(() => {
         if (dimensions.width && dimensions.height) {
             setSquares(generateSquares(numSquares));
         }
-    }, [dimensions, numSquares]);
+    }, [dimensions, numSquares, generateSquares]);
 
-    // Resize observer to update container dimensions
     useEffect(() => {
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
+        const observer = new ResizeObserver(entries => {
+            const entry = entries[0];
+            if (entry) {
                 setDimensions({
                     width: entry.contentRect.width,
                     height: entry.contentRect.height,
@@ -81,16 +80,17 @@ export function GridPattern({
             }
         });
 
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
+        const container = containerRef.current;
+        if (container) {
+            observer.observe(container);
         }
 
         return () => {
-            if (containerRef.current) {
-                resizeObserver.unobserve(containerRef.current);
+            if (container) {
+                observer.unobserve(container);
             }
         };
-    }, [containerRef]);
+    }, []);
 
     return (
         <svg
@@ -114,7 +114,7 @@ export function GridPattern({
                     <path
                         d={`M.5 ${height}V.5H${width}`}
                         fill="none"
-                        strokeDasharray={strokeDasharray}
+                        strokeDasharray={strokeDasharray.toString()}
                     />
                 </pattern>
             </defs>
@@ -131,7 +131,7 @@ export function GridPattern({
                             repeatType: "reverse",
                         }}
                         onAnimationComplete={() => updateSquarePosition(id)}
-                        key={`${x}-${y}-${index}`}
+                        key={`${x}-${y}-${id}`}
                         width={width - 1}
                         height={height - 1}
                         x={x * width + 1}
