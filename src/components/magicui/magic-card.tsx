@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { CSSProperties, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 
+// Hook to track mouse position
 interface MousePosition {
     x: number;
     y: number;
@@ -12,7 +13,7 @@ function useMousePosition(): MousePosition {
     const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
 
     useEffect(() => {
-        const handleMouseMove = (event: globalThis.MouseEvent) => {
+        const handleMouseMove = (event: MouseEvent) => {
             setMousePosition({ x: event.clientX, y: event.clientY });
         };
 
@@ -26,6 +27,7 @@ function useMousePosition(): MousePosition {
     return mousePosition;
 }
 
+// MagicContainer component that handles mouse effects and elements resizing
 interface MagicContainerProps {
     children?: ReactNode;
     className?: string;
@@ -97,64 +99,17 @@ const MagicContainer = ({ children, className }: MagicContainerProps) => {
     );
 };
 
+// MagicCard component for rendering cards with mouse interaction
 interface MagicCardProps {
-    /**
-     * @default <div />
-     * @type ReactElement
-     * @description The component to be rendered as the card
-     */
     as?: ReactElement;
-
-    /**
-     * @default ""
-     * @type string
-     * @description The className of the card
-     */
     className?: string;
-
-    /**
-     * @default ""
-     * @type ReactNode
-     * @description The children of the card
-     */
     children?: ReactNode;
-
-    /**
-     * @default 600
-     * @type number
-     * @description The size of the spotlight effect in pixels
-     */
     size?: number;
-
-    /**
-     * @default true
-     * @type boolean
-     * @description Whether to show the spotlight
-     */
     spotlight?: boolean;
-
-    /**
-     * @default "rgba(255,255,255,0.03)"
-     * @type string
-     * @description The color of the spotlight
-     */
     spotlightColor?: string;
-
-    /**
-     * @default true
-     * @type boolean
-     * @description Whether to isolate the card which is being hovered
-     */
     isolated?: boolean;
-
-    /**
-     * @default "rgba(255,255,255,0.03)"
-     * @type string
-     * @description The background of the card
-     */
     background?: string;
-
-    [key: string]: any; // Other custom properties
+    borderColor?: string;
 }
 
 const MagicCard: React.FC<MagicCardProps> = ({

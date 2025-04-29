@@ -35,11 +35,6 @@ const LabelInputContainer = ({
     );
 };
 
-/**
- * ******************************************************************************
- * ![INFO]: for buttons, refer to https://ui.aceternity.com/components/tailwindcss-buttons
- * ******************************************************************************
- */
 const QuestionForm = ({ question }: { question?: Models.Document }) => {
     const { user } = useAuthStore();
     const [tag, setTag] = React.useState("");
@@ -139,21 +134,18 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
     const submit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // // didn't check for attachment because it's optional in updating
-        // if (!formData.title || !formData.content || !formData.authorId) {
-        //     setError(() => "Please fill out all fields");
-        //     return;
-        // }
-
         setLoading(() => true);
         setError(() => "");
 
         try {
             const response = question ? await update() : await create();
-
             router.push(`/questions/${response.$id}/${slugify(formData.title)}`);
-        } catch (error: any) {
-            setError(() => error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(() => error.message);
+            } else {
+                setError(() => "An unknown error occurred");
+            }
         }
 
         setLoading(() => false);
@@ -182,8 +174,7 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                     placeholder="e.g. Is there an R function for finding the index of an element in a vector?"
                     type="text"
                     value={formData.title}
-                    onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                />
+                    onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))} />
             </LabelInputContainer>
             <LabelInputContainer>
                 <Label htmlFor="content">
@@ -195,9 +186,10 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                     </small>
                 </Label>
                 <RTE
-                    value={formData.content}
-                    onChange={(value: any) => setFormData(prev => ({ ...prev, content: value || "" }))}
-                />
+    value={formData.content}
+    onChange={(value: string | undefined) => setFormData(prev => ({ ...prev, content: value || "" }))}
+/>
+
             </LabelInputContainer>
             <LabelInputContainer>
                 <Label htmlFor="image">
@@ -220,8 +212,7 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                             ...prev,
                             attachment: files[0],
                         }));
-                    }}
-                />
+                    }} />
             </LabelInputContainer>
             <LabelInputContainer>
                 <Label htmlFor="tag">
@@ -240,8 +231,7 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                             placeholder="e.g. (java c objective-c)"
                             type="text"
                             value={tag}
-                            onChange={e => setTag(() => e.target.value)}
-                        />
+                            onChange={e => setTag(() => e.target.value)} />
                     </div>
                     <button
                         className="relative shrink-0 rounded-full border border-slate-600 bg-slate-700 px-8 py-2 text-sm text-white transition duration-200 hover:shadow-2xl hover:shadow-white/[0.1]"
@@ -253,8 +243,7 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                                 tags: new Set([...Array.from(prev.tags), tag]),
                             }));
                             setTag(() => "");
-                        }}
-                    >
+                        }}>
                         <div className="absolute inset-x-0 -top-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-teal-500 to-transparent shadow-2xl" />
                         <span className="relative z-20">Add</span>
                     </button>
@@ -277,8 +266,7 @@ const QuestionForm = ({ question }: { question?: Models.Document }) => {
                                                 ),
                                             }));
                                         }}
-                                        type="button"
-                                    >
+                                        type="button">
                                         <IconX size={12} />
                                     </button>
                                 </div>
