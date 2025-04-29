@@ -116,11 +116,12 @@ const MagicCard: React.FC<MagicCardProps> = ({
     className,
     children,
     size = 600,
-    spotlight = true,
+    // spotlight = true,
     spotlightColor = "rgba(255,255,255,0.03)",
-    isolated = true,
+    // isolated = true,
     borderColor = "hsl(0 0% 98%)",
     ...props
+    
 }) => {
     return (
         <div
@@ -143,6 +144,8 @@ const MagicCard: React.FC<MagicCardProps> = ({
             <div className={"absolute inset-[1px] -z-20 rounded-2xl bg-white dark:bg-black/95"} />
         </div>
     );
+    
 };
+
 
 export { MagicCard, MagicContainer };
