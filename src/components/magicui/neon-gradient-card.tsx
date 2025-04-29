@@ -51,7 +51,7 @@ interface NeonGradientCardProps {
      */
     neonColors?: NeonColorsProps;
 
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 // Extending CSSProperties to include custom properties
