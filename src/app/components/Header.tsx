@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
-import { IconHome, IconMessage, IconWorldQuestion,IconLogin,IconLogout } from "@tabler/icons-react";
+import { IconHome, IconMessage, IconWorldQuestion } from "@tabler/icons-react";
 import { useAuthStore } from "@/store/auth";
 import slugify from "@/utils/slugify";
 
@@ -19,16 +19,7 @@ export default function Header() {
             link: "/questions",
             icon: <IconWorldQuestion className="h-4 w-4 text-neutral-500 dark:text-white" />,
         },
-        // {
-        //     name: "Login",
-        //     link: "/login",
-        //     icon: <IconLogin className="h-4 w-4 text-neutral-500 dark:text-white" />,
-        // },
-        // {
-        //     name: "Signup",
-        //     link: "/resister",
-        //     icon: <IconLogout className="h-4 w-4 text-neutral-500 dark:text-white" />,
-        // },
+       
 
 
     ];

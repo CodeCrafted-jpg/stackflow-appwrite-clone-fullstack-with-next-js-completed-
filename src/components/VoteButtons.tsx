@@ -5,7 +5,7 @@ import { db, voteCollection } from "@/models/name";
 import { useAuthStore } from "@/store/auth";
 import { cn } from "@/lib/utils";
 import { IconCaretUpFilled, IconCaretDownFilled } from "@tabler/icons-react";
-import { ID, Models, Query } from "appwrite";
+import {  Models, Query } from "appwrite";
 import { useRouter } from "next/navigation";
 import React from "react";
 
