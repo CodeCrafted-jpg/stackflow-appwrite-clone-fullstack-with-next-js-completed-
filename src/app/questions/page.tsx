@@ -67,11 +67,11 @@ const Page = async ({
             <div className="mb-10 flex items-center justify-between">
                 <h1 className="text-3xl font-bold">All Questions</h1>
                 <Link href="/questions/ask">
-                    <ShimmerButton className="shadow-2xl">
-                        <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
-                            Ask a question
-                        </span>
-                    </ShimmerButton>
+                    <ShimmerButton className="pointer-events-none shadow-2xl">
+                <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+                    Ask a question
+                </span>
+            </ShimmerButton>
                 </Link>
             </div>
             <div className="mb-4">

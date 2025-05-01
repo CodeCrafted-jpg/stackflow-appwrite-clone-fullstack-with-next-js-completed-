@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import React from "react";
 
+
 const Ask = () => {
     const { user } = useAuthStore();
     const router = useRouter();
@@ -12,6 +13,7 @@ const Ask = () => {
     React.useEffect(() => {
         if (!user) {
             router.push("/login");
+            
         }
     }, [user, router]);
 
