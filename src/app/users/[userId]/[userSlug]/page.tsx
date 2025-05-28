@@ -6,16 +6,18 @@ import NumberTicker from "@/components/magicui/number-ticker";
 import { answerCollection, db, questionCollection } from "@/models/name";
 import { Query } from "node-appwrite";
 
-const Page = async ({ params }: { params: { userId: string; userSlug: string } }) => {
+const Page = async (props: { params: { userId: string; userSlug: string } }) => {
+    const { userId } = props.params;
+
     const [user, questions, answers] = await Promise.all([
-        users.get<UserPrefs>(params.userId),
+        users.get<UserPrefs>(userId),
         databases.listDocuments(db, questionCollection, [
-            Query.equal("authorId", params.userId),
-            Query.limit(1), // for optimization
+            Query.equal("authorId", userId),
+            Query.limit(1),
         ]),
         databases.listDocuments(db, answerCollection, [
-            Query.equal("authorId", params.userId),
-            Query.limit(1), // for optimization
+            Query.equal("authorId", userId),
+            Query.limit(1),
         ]),
     ]);
 
