@@ -52,7 +52,7 @@ export default async function TopContributers() {
     const topUsers = await users.list<UserPrefs>([Query.limit(10)]);
 
     return (
-        <div className="bg-background relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg bg-white/10 p-6 shadow-lg">
+        <div className="bg-background relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg p-6 shadow-lg">
             <AnimatedList>
                 {topUsers.users.map(user => (
                     <Notification user={user} key={user.$id} />
